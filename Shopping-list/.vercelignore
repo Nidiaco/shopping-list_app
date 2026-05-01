@@ -1,0 +1,9 @@
+node_modules/
+__pycache__/
+*.db
+*.py
+.git/
+src/
+static/
+app.py
+meals_data.py
