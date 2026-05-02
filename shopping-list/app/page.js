@@ -111,6 +111,8 @@ export default function Home() {
   const [confirmRecipe, setConfirmRecipe] = useState(null);
   const [activeRecipeFilter, setActiveRecipeFilter] = useState('standard');
   const [lastFetchedFilter, setLastFetchedFilter] = useState(null);
+  const [toast, setToast] = useState(null);
+  const [shoppingListSearch, setShoppingListSearch] = useState('');
 
   useEffect(() => {
     // Initialize Firebase
@@ -193,6 +195,11 @@ export default function Home() {
   }, [activeTab, activeRecipeFilter, lastFetchedFilter]);
 
 
+  const showToast = (message) => {
+    setToast(message);
+    setTimeout(() => setToast(null), 3000);
+  };
+
   const addItem = async (e) => {
     e.preventDefault();
     if (!newItem.trim()) return;
@@ -205,6 +212,7 @@ export default function Home() {
       createdAt: new Date().toISOString(),
     });
     setNewItem('');
+    showToast(`✓ Added "${newItem.trim()}" to your list`);
   };
 
   const toggleItem = async (id, checked) => {
@@ -261,13 +269,22 @@ export default function Home() {
       }
 
       setConfirmRecipe(null);
+      showToast(`✓ Added ${ingredients.length} ingredients from ${mealName}`);
     } catch (err) {
       console.error('Error adding ingredients:', err);
+      showToast('Error adding ingredients. Try again.');
     }
   };
 
   return (
     <div className="min-h-screen bg-white transition-colors pb-20">
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed top-4 left-4 right-4 bg-green-600 text-white px-4 py-3 rounded-lg shadow-lg animate-pulse z-40">
+          {toast}
+        </div>
+      )}
+
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 py-6 flex items-center justify-between">
@@ -307,37 +324,43 @@ export default function Home() {
           </div>
 
           {recipesLoading ? (
-            <div className="text-center py-16">
-              <p className="text-gray-500">Loading recipes...</p>
+            <div className="grid grid-cols-2 gap-4">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="bg-gray-200 rounded-xl h-56 animate-pulse"></div>
+              ))}
             </div>
           ) : recipes.length === 0 ? (
             <div className="text-center py-16">
-              <div className="text-5xl mb-4">🍳</div>
-              <p className="text-gray-500 text-lg">No recipes found</p>
+              <div className="text-6xl mb-4">🍳</div>
+              <p className="text-gray-700 text-lg font-medium mb-2">No recipes in this category</p>
+              <p className="text-gray-500">Try another diet type</p>
             </div>
           ) : (
             <>
               <div className="grid grid-cols-2 gap-4">
                 {recipes.slice(0, 12).map(recipe => (
-                  <div key={recipe.idMeal} className="border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition flex flex-col">
-                    <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-32 object-cover" />
-                    <div className="p-3 flex flex-col flex-1">
-                      <h3 className="font-semibold text-sm text-gray-900 line-clamp-2">{recipe.strMeal}</h3>
+                  <div key={recipe.idMeal} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition duration-300 flex flex-col transform hover:scale-105">
+                    <div className="relative h-40">
+                      <img src={recipe.strMealThumb} alt={recipe.strMeal} className="w-full h-full object-cover" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                    </div>
+                    <div className="p-4 flex flex-col flex-1">
+                      <h3 className="font-bold text-sm text-gray-900 line-clamp-2 mb-3">{recipe.strMeal}</h3>
                       <div className="flex gap-2 mt-auto">
                         <button
                           onClick={() => viewRecipe(recipe.idMeal)}
-                          className="flex-1 px-2 py-1 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded transition"
+                          className="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-lg transition active:scale-95 shadow-md hover:shadow-lg"
                         >
-                          View
+                          👁️ View
                         </button>
                         <button
                           onClick={() => {
                             setSelectedRecipe(recipe.idMeal);
                             setConfirmRecipe(recipe);
                           }}
-                          className="flex-1 px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition"
+                          className="flex-1 px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-xs font-semibold rounded-lg transition active:scale-95 shadow-md hover:shadow-lg"
                         >
-                          Add Ingredients
+                          🛒 Add
                         </button>
                       </div>
                     </div>
@@ -434,35 +457,67 @@ export default function Home() {
               value={newItem}
               onChange={(e) => setNewItem(e.target.value)}
               placeholder="Add an item..."
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="flex-1 px-4 py-3 rounded-lg border-2 border-gray-200 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
             />
             <button
               type="submit"
-              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition active:scale-95"
+              className="px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition active:scale-95 shadow-md hover:shadow-lg"
             >
               Add
             </button>
           </div>
           {newItem.trim() && (
-            <div className={`px-3 py-1 rounded-full text-sm font-medium w-fit ${CATEGORY_COLORS[detectCategory(newItem)]} animate-pulse`}>
+            <div className={`px-3 py-1 rounded-full text-sm font-medium w-fit ${CATEGORY_COLORS[detectCategory(newItem)]} shadow-sm`}>
               {CATEGORIES[detectCategory(newItem)].emoji} {CATEGORIES[detectCategory(newItem)].label}
             </div>
           )}
         </form>
 
+        {/* Search & Controls */}
+        {items.length > 0 && (
+          <div className="mb-6 flex gap-2">
+            <input
+              type="text"
+              value={shoppingListSearch}
+              onChange={(e) => setShoppingListSearch(e.target.value)}
+              placeholder="Search items..."
+              className="flex-1 px-4 py-2 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+            />
+            {items.some(i => i.checked) && (
+              <button
+                onClick={async () => {
+                  const checkedIds = items.filter(i => i.checked).map(i => i.id);
+                  for (const id of checkedIds) {
+                    await remove(ref(db, `shopping-list/items/${id}`));
+                  }
+                  showToast('✓ Cleared completed items');
+                }}
+                className="px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 font-medium rounded-lg transition"
+              >
+                Clear Done
+              </button>
+            )}
+          </div>
+        )}
+
         {/* Items List */}
         {loading ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">Loading...</p>
+          <div className="space-y-3">
+            {[...Array(4)].map((_, i) => (
+              <div key={i} className="h-16 bg-gray-200 rounded-lg animate-pulse"></div>
+            ))}
           </div>
         ) : items.length === 0 ? (
-          <div className="text-center py-16">
-            <div className="text-5xl mb-4">📭</div>
-            <p className="text-gray-500 text-lg">No items yet. Add one to get started! 👆</p>
+          <div className="text-center py-20">
+            <div className="text-6xl mb-4">📭</div>
+            <p className="text-gray-700 text-lg font-medium mb-2">Your shopping list is empty</p>
+            <p className="text-gray-500 mb-4">Add items above or browse recipes to get started</p>
           </div>
         ) : (() => {
-          const uncheckedItems = items.filter(i => !i.checked);
-          const checkedItems = items.filter(i => i.checked);
+          const searchLower = shoppingListSearch.toLowerCase();
+          const filteredItems = items.filter(i => i.name.toLowerCase().includes(searchLower));
+          const uncheckedItems = filteredItems.filter(i => !i.checked);
+          const checkedItems = filteredItems.filter(i => i.checked);
 
           const groupedItems = {};
           CATEGORY_ORDER.forEach(cat => {
@@ -476,10 +531,10 @@ export default function Home() {
                 const cat = CATEGORIES[category];
                 return (
                   <div key={category}>
-                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200">
-                      <span className="text-xl">{cat.emoji}</span>
-                      <h2 className="text-lg font-semibold text-gray-900">{cat.label}</h2>
-                      <span className="ml-auto text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700">
+                    <div className="flex items-center gap-2 mb-3 pb-3 border-b-2 border-gray-200">
+                      <span className="text-2xl">{cat.emoji}</span>
+                      <h2 className="text-lg font-bold text-gray-900">{cat.label}</h2>
+                      <span className="ml-auto text-xs font-bold px-3 py-1 rounded-full bg-gray-100 text-gray-700 shadow-sm">
                         {groupedItems[category].length}
                       </span>
                     </div>
@@ -487,7 +542,7 @@ export default function Home() {
                       {groupedItems[category].map(item => (
                         <div
                           key={item.id}
-                          className="flex items-center gap-4 p-4 rounded-lg border border-l-4 bg-white border-gray-200 transition-all duration-300 hover:shadow-sm"
+                          className="flex items-center gap-4 p-4 rounded-xl border border-l-4 bg-white border-gray-200 shadow-sm transition-all duration-300 hover:shadow-md hover:border-gray-300 group"
                           style={{
                             borderLeftColor: CATEGORIES[item.category || 'other'].keywords ? '#10b981' : '#6b7280',
                           }}
@@ -496,17 +551,17 @@ export default function Home() {
                             type="checkbox"
                             checked={item.checked}
                             onChange={() => toggleItem(item.id, item.checked)}
-                            className="w-6 h-6 rounded cursor-pointer accent-green-600"
+                            className="w-6 h-6 rounded cursor-pointer accent-green-600 transition"
                           />
-                          <span className="flex-1 text-lg font-medium text-gray-900">
+                          <span className="flex-1 text-lg font-medium text-gray-900 group-hover:text-gray-700">
                             {item.name}
                           </span>
-                          <span className={`text-xs font-medium px-2 py-1 rounded-full ${CATEGORY_COLORS[item.category || 'other']}`}>
+                          <span className={`text-xs font-bold px-3 py-1 rounded-full ${CATEGORY_COLORS[item.category || 'other']} shadow-sm`}>
                             {CATEGORIES[item.category || 'other'].emoji}
                           </span>
                           <button
                             onClick={() => deleteItem(item.id)}
-                            className="p-2 text-gray-400 hover:text-red-600 transition text-lg"
+                            className="p-2 text-gray-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition duration-200 text-lg"
                           >
                             🗑️
                           </button>
@@ -519,10 +574,10 @@ export default function Home() {
 
               {checkedItems.length > 0 && (
                 <div className="mt-8 pt-6 border-t border-gray-200 dark:border-slate-700">
-                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200">
-                    <span className="text-xl">✅</span>
-                    <h2 className="text-lg font-semibold text-gray-900">In Cart</h2>
-                    <span className="ml-auto text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-800">
+                  <div className="flex items-center gap-2 mb-3 pb-3 border-b-2 border-green-200">
+                    <span className="text-2xl">✅</span>
+                    <h2 className="text-lg font-bold text-gray-900">In Cart</h2>
+                    <span className="ml-auto text-xs font-bold px-3 py-1 rounded-full bg-green-100 text-green-800 shadow-sm">
                       {checkedItems.length}
                     </span>
                   </div>
@@ -530,23 +585,23 @@ export default function Home() {
                     {checkedItems.map(item => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-l-4 bg-green-50 border-green-200 border-l-green-500 transition-all duration-300"
+                        className="flex items-center gap-4 p-4 rounded-xl border border-l-4 bg-green-50 border-green-200 border-l-green-500 shadow-sm transition-all duration-300 hover:shadow-md group"
                       >
                         <input
                           type="checkbox"
                           checked={item.checked}
                           onChange={() => toggleItem(item.id, item.checked)}
-                          className="w-6 h-6 rounded cursor-pointer accent-green-600"
+                          className="w-6 h-6 rounded cursor-pointer accent-green-600 transition"
                         />
-                        <span className="flex-1 text-lg font-medium line-through text-gray-400">
+                        <span className="flex-1 text-lg font-medium line-through text-gray-400 group-hover:text-gray-500">
                           {item.name}
                         </span>
-                        <span className={`text-xs font-medium px-2 py-1 rounded-full ${CATEGORY_COLORS[item.category || 'other']}`}>
+                        <span className={`text-xs font-bold px-3 py-1 rounded-full ${CATEGORY_COLORS[item.category || 'other']} shadow-sm opacity-75`}>
                           {CATEGORIES[item.category || 'other'].emoji}
                         </span>
                         <button
                           onClick={() => deleteItem(item.id)}
-                          className="p-2 text-gray-400 hover:text-red-600 transition text-lg"
+                          className="p-2 text-gray-300 hover:text-red-600 hover:bg-red-50 rounded-lg transition duration-200 text-lg"
                         >
                           🗑️
                         </button>
