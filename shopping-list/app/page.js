@@ -110,6 +110,7 @@ export default function Home() {
   const [recipeDetails, setRecipeDetails] = useState(null);
   const [confirmRecipe, setConfirmRecipe] = useState(null);
   const [activeRecipeFilter, setActiveRecipeFilter] = useState('standard');
+  const [lastFetchedFilter, setLastFetchedFilter] = useState(null);
 
   useEffect(() => {
     // Initialize Firebase
@@ -184,19 +185,12 @@ export default function Home() {
 
   useEffect(() => {
     if (activeTab === 'recipes') {
-      const lastRefreshKey = `recipes_last_refresh_${activeRecipeFilter}_v2`;
-      const lastRefresh = localStorage.getItem(lastRefreshKey);
-      const now = Date.now();
-      const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
-
-      if (!lastRefresh || (now - parseInt(lastRefresh)) > sevenDaysMs) {
+      if (activeRecipeFilter !== lastFetchedFilter) {
         fetchRecipesByFilter(activeRecipeFilter);
-        localStorage.setItem(lastRefreshKey, now.toString());
-      } else if (recipes.length === 0) {
-        fetchRecipesByFilter(activeRecipeFilter);
+        setLastFetchedFilter(activeRecipeFilter);
       }
     }
-  }, [activeTab, activeRecipeFilter]);
+  }, [activeTab, activeRecipeFilter, lastFetchedFilter]);
 
 
   const addItem = async (e) => {
