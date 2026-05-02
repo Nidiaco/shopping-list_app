@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   applicationName: "Shopping List",
   appleWebApp: {
     capable: true,
-    statusBarStyle: "white",
+    statusBarStyle: "black-translucent",
     title: "Shopping List",
   },
   icons: {
