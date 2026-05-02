@@ -75,17 +75,17 @@ const CATEGORIES = {
 };
 
 const CATEGORY_COLORS = {
-  produce: 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300',
-  meat: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300',
-  dairy: 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300',
-  bakery: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300',
-  frozen: 'bg-cyan-100 text-cyan-800 dark:bg-cyan-900/30 dark:text-cyan-300',
-  pantry: 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300',
-  beverages: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300',
-  snacks: 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-300',
-  household: 'bg-teal-100 text-teal-800 dark:bg-teal-900/30 dark:text-teal-300',
-  health: 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-300',
-  other: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
+  produce: 'bg-green-100 text-green-800',
+  meat: 'bg-red-100 text-red-800',
+  dairy: 'bg-blue-100 text-blue-800',
+  bakery: 'bg-amber-100 text-amber-800',
+  frozen: 'bg-cyan-100 text-cyan-800',
+  pantry: 'bg-orange-100 text-orange-800',
+  beverages: 'bg-purple-100 text-purple-800',
+  snacks: 'bg-pink-100 text-pink-800',
+  household: 'bg-teal-100 text-teal-800',
+  health: 'bg-rose-100 text-rose-800',
+  other: 'bg-gray-100 text-gray-700',
 };
 
 const CATEGORY_ORDER = ['produce', 'meat', 'dairy', 'bakery', 'frozen', 'pantry', 'beverages', 'snacks', 'household', 'health', 'other'];
@@ -154,13 +154,13 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950 transition-colors">
+    <div className="min-h-screen bg-white transition-colors">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 sticky top-0 z-50">
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-2xl mx-auto px-4 py-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">🛒 Shopping List</h1>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">255 Mt Pleasant Shopping list</p>
+            <h1 className="text-3xl font-bold text-gray-900">🛒 Shopping List</h1>
+            <p className="text-sm text-gray-500 mt-1">255 Mt Pleasant Shopping list</p>
           </div>
         </div>
       </header>
@@ -175,7 +175,7 @@ export default function Home() {
               value={newItem}
               onChange={(e) => setNewItem(e.target.value)}
               placeholder="Add an item..."
-              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+              className="flex-1 px-4 py-3 rounded-lg border border-gray-300 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500"
             />
             <button
               type="submit"
@@ -194,12 +194,12 @@ export default function Home() {
         {/* Items List */}
         {loading ? (
           <div className="text-center py-12">
-            <p className="text-gray-500 dark:text-gray-400">Loading...</p>
+            <p className="text-gray-500">Loading...</p>
           </div>
         ) : items.length === 0 ? (
           <div className="text-center py-16">
             <div className="text-5xl mb-4">📭</div>
-            <p className="text-gray-500 dark:text-gray-400 text-lg">No items yet. Add one to get started! 👆</p>
+            <p className="text-gray-500 text-lg">No items yet. Add one to get started! 👆</p>
           </div>
         ) : (() => {
           const uncheckedItems = items.filter(i => !i.checked);
@@ -217,10 +217,10 @@ export default function Home() {
                 const cat = CATEGORIES[category];
                 return (
                   <div key={category}>
-                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-slate-700">
+                    <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200">
                       <span className="text-xl">{cat.emoji}</span>
-                      <h2 className="text-lg font-semibold text-gray-900 dark:text-white">{cat.label}</h2>
-                      <span className="ml-auto text-xs font-medium px-2 py-1 rounded-full bg-gray-100 dark:bg-slate-800 text-gray-700 dark:text-gray-300">
+                      <h2 className="text-lg font-semibold text-gray-900">{cat.label}</h2>
+                      <span className="ml-auto text-xs font-medium px-2 py-1 rounded-full bg-gray-100 text-gray-700">
                         {groupedItems[category].length}
                       </span>
                     </div>
@@ -228,7 +228,7 @@ export default function Home() {
                       {groupedItems[category].map(item => (
                         <div
                           key={item.id}
-                          className="flex items-center gap-4 p-4 rounded-lg border border-l-4 bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-700 transition-all duration-300 hover:shadow-sm"
+                          className="flex items-center gap-4 p-4 rounded-lg border border-l-4 bg-white border-gray-200 transition-all duration-300 hover:shadow-sm"
                           style={{
                             borderLeftColor: CATEGORIES[item.category || 'other'].keywords ? '#10b981' : '#6b7280',
                           }}
@@ -239,7 +239,7 @@ export default function Home() {
                             onChange={() => toggleItem(item.id, item.checked)}
                             className="w-6 h-6 rounded cursor-pointer accent-green-600"
                           />
-                          <span className="flex-1 text-lg font-medium text-gray-900 dark:text-white">
+                          <span className="flex-1 text-lg font-medium text-gray-900">
                             {item.name}
                           </span>
                           <span className={`text-xs font-medium px-2 py-1 rounded-full ${CATEGORY_COLORS[item.category || 'other']}`}>
@@ -247,7 +247,7 @@ export default function Home() {
                           </span>
                           <button
                             onClick={() => deleteItem(item.id)}
-                            className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition text-lg"
+                            className="p-2 text-gray-400 hover:text-red-600 transition text-lg"
                           >
                             🗑️
                           </button>
@@ -260,10 +260,10 @@ export default function Home() {
 
               {checkedItems.length > 0 && (
                 <div className="mt-8 pt-6 border-t border-gray-200 dark:border-slate-700">
-                  <div className="flex items-center gap-2 mb-3 pb-2">
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200">
                     <span className="text-xl">✅</span>
-                    <h2 className="text-lg font-semibold text-gray-900 dark:text-white">In Cart</h2>
-                    <span className="ml-auto text-xs font-medium px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300">
+                    <h2 className="text-lg font-semibold text-gray-900">In Cart</h2>
+                    <span className="ml-auto text-xs font-medium px-2 py-1 rounded-full bg-green-100 text-green-800">
                       {checkedItems.length}
                     </span>
                   </div>
@@ -271,7 +271,7 @@ export default function Home() {
                     {checkedItems.map(item => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-4 p-4 rounded-lg border border-l-4 bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800/50 border-l-green-500 transition-all duration-300"
+                        className="flex items-center gap-4 p-4 rounded-lg border border-l-4 bg-green-50 border-green-200 border-l-green-500 transition-all duration-300"
                       >
                         <input
                           type="checkbox"
@@ -279,7 +279,7 @@ export default function Home() {
                           onChange={() => toggleItem(item.id, item.checked)}
                           className="w-6 h-6 rounded cursor-pointer accent-green-600"
                         />
-                        <span className="flex-1 text-lg font-medium line-through text-gray-400 dark:text-gray-500">
+                        <span className="flex-1 text-lg font-medium line-through text-gray-400">
                           {item.name}
                         </span>
                         <span className={`text-xs font-medium px-2 py-1 rounded-full ${CATEGORY_COLORS[item.category || 'other']}`}>
@@ -287,7 +287,7 @@ export default function Home() {
                         </span>
                         <button
                           onClick={() => deleteItem(item.id)}
-                          className="p-2 text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition text-lg"
+                          className="p-2 text-gray-400 hover:text-red-600 transition text-lg"
                         >
                           🗑️
                         </button>
