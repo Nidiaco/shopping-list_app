@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Pickle Champs 🥒</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="loginScreen">
+    <div class="login-box">
+      <div class="login-logo">🥒</div>
+      <h1>Pickle Champs</h1>
+      <p>Christchurch Pickleball Crew</p>
+      <form id="loginForm">
+        <input type="password" id="passwordInput" placeholder="Enter password" autocomplete="current-password" />
+        <button type="submit" class="btn-primary"><i class="bi bi-lock-fill"></i> Enter</button>
+        <p id="loginError" class="error-msg" hidden>Wrong password. Try again.</p>
+      </form>
+    </div>
+  </div>
+
+  <script type="module">
+    const PASSWORD       = 'Champions';
+    const ADMIN_PASSWORD = 'NickAdmin';
+
+    // Already logged in — skip straight to app
+    if (sessionStorage.getItem('pkl_auth') === '1') {
+      window.location.replace('app.html');
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const pw = document.getElementById('passwordInput').value;
+      if (pw === ADMIN_PASSWORD) {
+        sessionStorage.setItem('pkl_auth', '1');
+        sessionStorage.setItem('pkl_admin', '1');
+        window.location.href = 'app.html';
+      } else if (pw === PASSWORD) {
+        sessionStorage.setItem('pkl_auth', '1');
+        sessionStorage.removeItem('pkl_admin');
+        window.location.href = 'app.html';
+      } else {
+        document.getElementById('loginError').hidden = false;
+        document.getElementById('passwordInput').value = '';
+      }
+    });
+  </script>
+</body>
+</html>
