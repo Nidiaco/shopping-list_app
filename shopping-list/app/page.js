@@ -148,6 +148,8 @@ export default function Home() {
     return !lowCarbKeywords.some(keyword => mealName.includes(keyword));
   };
 
+  const shuffle = (arr) => [...arr].sort(() => Math.random() - 0.5);
+
   const fetchRecipesByFilter = async (filter) => {
     setRecipesLoading(true);
     let url = '';
@@ -178,7 +180,7 @@ export default function Home() {
         meals = meals.filter(isKetoFriendly);
       }
 
-      setRecipes(meals);
+      setRecipes(shuffle(meals));
     } catch (err) {
       console.error('Error fetching recipes:', err);
     }
@@ -187,12 +189,10 @@ export default function Home() {
 
   useEffect(() => {
     if (activeTab === 'recipes') {
-      if (activeRecipeFilter !== lastFetchedFilter) {
-        fetchRecipesByFilter(activeRecipeFilter);
-        setLastFetchedFilter(activeRecipeFilter);
-      }
+      fetchRecipesByFilter(activeRecipeFilter);
+      setLastFetchedFilter(activeRecipeFilter);
     }
-  }, [activeTab, activeRecipeFilter, lastFetchedFilter]);
+  }, [activeTab, activeRecipeFilter]);
 
 
   const showToast = (message) => {
