@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192">
+  <rect width="192" height="192" rx="40" fill="#16a34a"/>
+  <g transform="translate(96,96)" fill="none" stroke="white" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Cart basket -->
+    <path d="-48,8 -40,-24 40,-24 48,8" />
+    <line x1="-48" y1="8" x2="48" y2="8"/>
+    <!-- Cart body -->
+    <path d="-42,8 -36,32 36,32 42,8"/>
+    <!-- Handle -->
+    <line x1="-48" y1="-24" x2="-60" y2="-40"/>
+    <!-- Wheels -->
+    <circle cx="-28" cy="42" r="6" fill="white"/>
+    <circle cx="28" cy="42" r="6" fill="white"/>
+    <!-- Items in cart -->
+    <line x1="-16" y1="-8" x2="-16" y2="4"/>
+    <line x1="0" y1="-14" x2="0" y2="4"/>
+    <line x1="16" y1="-8" x2="16" y2="4"/>
+  </g>
+</svg>
